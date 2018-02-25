@@ -3,73 +3,39 @@ package com.test.edv.buseyetraveler;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.support.v4.app.FragmentManager;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.IllegalFormatCodePointException;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -82,9 +48,10 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
     EditText txtSearchMap;
     Marker marker;
     Marker locationMaker;
+    Marker DriverMaker;
     FusedLocationProviderClient fusedLocationProviderClient;
-    ImageView imgGpsView;
-    Button setBusinessLocation;
+    Button btnSearch;
+    Button btnLiveLocation;
     private float zoomMap = 16;
     private double latitude;
     private double longitude;
@@ -94,8 +61,12 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private boolean locationPermissionGranted = false;
     private static final int LOCATION_PERMISSION_REQUEST = 1234;
+    private LocationRequest mLocationRequest;
+    private long UPDATE_INTERVAL = 5 * 1000;
+    private long FASTEST_INTERVAL = 2000;
+    private LocationCallback locationCallback;
     public String id;
-    public String nearest;
+    public String SerchText=null;
 
     public TravelerMapFragment() {
         // Required empty public constructor
@@ -112,6 +83,39 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
 
         Log.e("onCreateView", "Top");
         TmapView = inflater.inflate(R.layout.fragment_traveler_map, container, false);
+        btnSearch = (Button)TmapView.findViewById(R.id.btnSearch);
+        btnLiveLocation=(Button)TmapView.findViewById(R.id.btnliveLocation);
+        txtSearchMap=(EditText) TmapView.findViewById(R.id.txtMapSearch);
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              Log.e("btnSearch","btnSearch");
+                 SerchText = txtSearchMap.getText().toString();
+                Log.e("String" , SerchText);
+                if(!SerchText.isEmpty())
+                {
+                    BusStopLocation(SerchText);
+                    BusLocation();
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"Plase enter Root Number",Toast.LENGTH_LONG).show();
+                }
+
+
+            }
+        });
+
+
+        btnLiveLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("btnLiveLocation","btnLiveLocation");
+                fusedLocationProviderClient.removeLocationUpdates( locationCallback);
+                getDeviceLocation();
+            }
+        });
         return TmapView;
     }
 
@@ -146,11 +150,14 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
 
         MapsInitializer.initialize(getContext());
         TgoogleMap = googleMap;
+        Log.e("baa","getDeviceLocation");
         getDeviceLocation();
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        googleMap.addMarker(new MarkerOptions().position(new LatLng(6.894070, 79.902481)).title("Colombo").snippet("go"));
-        CameraPosition colombo = CameraPosition.builder().target(new LatLng(6.894070, 79.902481)).zoom(10).bearing(0).tilt(45).build();
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(colombo));
+        TgoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        TgoogleMap.setTrafficEnabled(true);
+
+       // googleMap.addMarker(new MarkerOptions().position(new LatLng(6.894070, 79.902481)).title("Colombo").snippet("go"));
+      //  CameraPosition colombo = CameraPosition.builder().target(new LatLng(6.894070, 79.902481)).zoom(10).bearing(0).tilt(45).build();
+      //  googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(colombo));
 
     }
 
@@ -174,7 +181,7 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
             }
         }
     }
-
+//==============================================================================================================================
     private void getLocationPermission(){
 
         Log.d(TAG,"grtLocationPermission: getting LOcation permission");
@@ -194,51 +201,19 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
             ActivityCompat.requestPermissions((Activity) getContext(),permsission,LOCATION_PERMISSION_REQUEST);
         }
     }
-
+//====================================================================================================================================
     private void getDeviceLocation()
     {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
 
         try {
 
+            mLocationRequest = new LocationRequest();
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            mLocationRequest.setInterval(UPDATE_INTERVAL);
+            mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
 
-
-            final Task location = fusedLocationProviderClient.getLastLocation();
-            location.addOnCompleteListener(new OnCompleteListener()
-            {
-                @Override
-                public void onComplete(@NonNull Task task)
-                {
-                  try
-                     {
-                      if (task.isComplete())
-                      {
-
-                        Log.d(TAG, "onComplete: found the location");
-                        Location currentLocation = (Location) task.getResult();
-                        Log.d(TAG, "location: "+currentLocation.toString());
-                        Log.d("current location",currentLocation.getLatitude()+" "+currentLocation.getLongitude());
-                      //  goToLocationZoom(currentLocation.getLatitude(), currentLocation.getLongitude(), zoomMap);
-
-                      }
-                      else
-                          {
-
-                              Log.d(TAG, "onComplete: didn't found the location");
-                              Toast.makeText(getContext(), "Unable to find the location", Toast.LENGTH_LONG).show();
-                          }
-                     }
-                  catch (NullPointerException e)
-                     {
-                       Log.e(TAG,"NullpointException: "+e.getMessage());
-                       Toast.makeText(getContext(),"Turn On the GPS",Toast.LENGTH_LONG).show();
-                     }
-                  catch (Exception e)
-                     {
-                        e.printStackTrace();
-                     }
-                }
-            });
+            fusedLocationProviderClient.requestLocationUpdates(mLocationRequest,getlocationcallback(), Looper.myLooper());
 
         }
         catch (SecurityException e)
@@ -246,6 +221,54 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
 
         }
 
+    }
+//===================================================================================================================
+    private LocationCallback getlocationcallback()
+    {
+
+         locationCallback = new LocationCallback(){
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Log.e("Locatoion on update","getLatitude:"+locationResult.getLastLocation().getLatitude()+" getLongitude:"+locationResult.getLastLocation().getLongitude());
+
+                LatLng latLng = new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
+
+                if (marker!=null){
+                    Log.e("remove","remove");
+                    marker.remove();
+                }
+                MarkerOptions options = new MarkerOptions().position(latLng).title("MY LCATION").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_arrow));
+                marker=TgoogleMap.addMarker(options);
+                CameraPosition colombo = CameraPosition.builder().target(latLng).zoom(15).bearing(0).tilt(45).build();
+                TgoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(colombo));
+
+                if(SerchText != null)
+                {
+                    Log.e("remove","Bus location");
+                    BusLocation();
+                }
+
+            }
+        };
+        return locationCallback;
+    }
+ //=====================================================================================================================
+    private  void  BusStopLocation(String root)
+    {
+        Log.e("root" , root);
+        MarkerOptions options = new MarkerOptions().position(new LatLng(6.906731, 79.964976)).title("MY LCATION").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus_stop));
+        locationMaker=TgoogleMap.addMarker(options);
+    }
+
+//-=============================================================================================================================
+    private void  BusLocation(){
+        LatLng latLng = new LatLng(6.912932,79.972047);
+        if (DriverMaker!=null){
+            Log.e("remove","DriverMaker");
+            DriverMaker.remove();
+        }
+        MarkerOptions options = new MarkerOptions().position(latLng).title("MY LCATION").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus));
+        DriverMaker=TgoogleMap.addMarker(options);
     }
 
 }

@@ -20,7 +20,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="53dp"
-        android:background="@mipmap/icon_gps" />
+        android:background="@drawable/ic_position"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -53,8 +53,11 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:background="@mipmap/icon_magnifier" />
-
+            android:background="@drawable/ic_search"/>
+<!--
+        android:background="@mipmap/icon_gps"
+android:background="@mipmap/icon_magnifier"
+-->
 
     </RelativeLayout>
 
