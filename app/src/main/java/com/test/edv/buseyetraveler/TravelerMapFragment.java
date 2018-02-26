@@ -3,6 +3,7 @@ package com.test.edv.buseyetraveler;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.VoiceInteractor;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.content.pm.PackageManager;
@@ -21,6 +22,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -36,6 +43,10 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -112,6 +123,12 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
             @Override
             public void onClick(View v) {
                 Log.e("btnLiveLocation","btnLiveLocation");
+                if (locationMaker!=null && DriverMaker!=null){
+                    Log.e("remove","Bus Stop and DriverMaker");
+                    locationMaker.remove();
+                    DriverMaker.remove();
+                    SerchText=null;
+                }
                 fusedLocationProviderClient.removeLocationUpdates( locationCallback);
                 getDeviceLocation();
             }
@@ -256,17 +273,58 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
     private  void  BusStopLocation(String root)
     {
         Log.e("root" , root);
-        MarkerOptions options = new MarkerOptions().position(new LatLng(6.906731, 79.964976)).title("MY LCATION").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus_stop));
-        locationMaker=TgoogleMap.addMarker(options);
+
+        if (locationMaker!=null){
+            Log.e("remove","DriverMaker");
+            locationMaker.remove();
+        }
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        String Url = "https://buseye.000webhostapp.com/BusStop.php";
+        StringRequest request = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try
+                {
+                    JSONArray jsonArray = new JSONArray(response);
+
+                    for (int i=0;i<jsonArray.length();i++)
+                    {
+                        JSONObject BusStopDetails = jsonArray.getJSONObject(i);
+                        LatLng latLng = new LatLng(BusStopDetails.getDouble("Latitude"),BusStopDetails.getDouble("Longitude"));
+                        Log.e("Deta BST",BusStopDetails.getString("Name")+" "+BusStopDetails.getDouble("Latitude")+" "+BusStopDetails.getDouble("Longitude"));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(BusStopDetails.getString("Name")).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus_stop));
+                        locationMaker=TgoogleMap.addMarker(options);
+                    }
+
+                }catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(getContext(),"Error"+error,Toast.LENGTH_LONG).show();
+            }
+        });
+
+        requestQueue.add(request);
     }
 
 //-=============================================================================================================================
     private void  BusLocation(){
-        LatLng latLng = new LatLng(6.912932,79.972047);
+       LatLng latLng = new LatLng(6.912932,79.972047);
         if (DriverMaker!=null){
             Log.e("remove","DriverMaker");
             DriverMaker.remove();
         }
+
+
+
         MarkerOptions options = new MarkerOptions().position(latLng).title("MY LCATION").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus));
         DriverMaker=TgoogleMap.addMarker(options);
     }
