@@ -117,7 +117,7 @@ public class UserMenuActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_map) {
          //   int commit= fragmentManager.beginTransaction().replace(R.id.mainLayout, setValue()).commit();
 
             TravelerMapFragment gmapFragment =new TravelerMapFragment();
@@ -126,7 +126,11 @@ public class UserMenuActivity extends AppCompatActivity
             tx.replace(R.id.mainLayout, setValue());
             tx.commit();
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_tickets) {
+              PaymentFragment paymentFragment = new PaymentFragment();
+              FragmentTransaction pyment = getSupportFragmentManager().beginTransaction();
+              pyment.replace(R.id.mainLayout,paymentFragment);
+              pyment.commit();
 
         } else if (id == R.id.nav_slideshow) {
 

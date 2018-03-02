@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         Button btnlogin = (Button)findViewById(R.id.btnlogin);
+        Button btnregister =(Button)findViewById(R.id.btnRequestRegister);
         final EditText txtuserName =(EditText)findViewById(R.id.txtuserName);
         final EditText txtPassword =(EditText)findViewById(R.id.txtPassword);
 
@@ -34,14 +36,23 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String userName =txtuserName.getText().toString();
                 String Password =txtPassword.getText().toString();
-              //  sendNetworkRequest(userName,Password);
+               sendNetworkRequest(userName,Password);
+
+            }
+        });
+
+
+        btnregister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 try {
-                    Intent k = new Intent(LoginActivity.this, UserMenuActivity.class);
-                    startActivity(k);
+                    Intent register = new Intent(LoginActivity.this, RegisterActivity.class);
+                    startActivity(register);
                 } catch(Exception e) {
                 }
             }
         });
+
     }
 
     private  void  sendNetworkRequest(String name, String pass) {
@@ -63,6 +74,19 @@ public class LoginActivity extends AppCompatActivity {
 
                         String Result = jsonObj.getString("Result")+" "+jsonObj.getString("ID")+" "+jsonObj.getString("Name");
                         Log.e("resalt",Result);
+
+                        if (jsonObj.getString("Result").equals("true"))
+                        {
+                            try {
+                                Intent usermenu = new Intent(LoginActivity.this, UserMenuActivity.class);
+                                startActivity(usermenu);
+                            } catch(Exception e) {
+                            }
+                        }
+                        else
+                        {
+                            Toast.makeText(LoginActivity.this,"Plese check user name and password",Toast.LENGTH_LONG).show();
+                        }
 
 
                     }

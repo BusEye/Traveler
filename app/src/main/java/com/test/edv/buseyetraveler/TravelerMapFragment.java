@@ -63,6 +63,7 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
     FusedLocationProviderClient fusedLocationProviderClient;
     Button btnSearch;
     Button btnLiveLocation;
+    LatLng currentLocation;
     private float zoomMap = 16;
     private double latitude;
     private double longitude;
@@ -98,16 +99,26 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
         btnLiveLocation=(Button)TmapView.findViewById(R.id.btnliveLocation);
         txtSearchMap=(EditText) TmapView.findViewById(R.id.txtMapSearch);
 
+        //===============================================================================
+
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
               Log.e("btnSearch","btnSearch");
                  SerchText = txtSearchMap.getText().toString();
                 Log.e("String" , SerchText);
+
                 if(!SerchText.isEmpty())
                 {
+
+                    TgoogleMap.clear();
+                    fusedLocationProviderClient.removeLocationUpdates( locationCallback);
+                    getDeviceLocation();
                     BusStopLocation(SerchText);
                     BusLocation();
+
+                    CameraPosition colombo = CameraPosition.builder().target(currentLocation).zoom(15).bearing(0).tilt(45).build();
+                    TgoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(colombo));
                 }
                 else
                 {
@@ -118,19 +129,36 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
             }
         });
 
+//==================================================================================
 
         btnLiveLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SerchText = txtSearchMap.getText().toString();
                 Log.e("btnLiveLocation","btnLiveLocation");
                 if (locationMaker!=null && DriverMaker!=null){
                     Log.e("remove","Bus Stop and DriverMaker");
-                    locationMaker.remove();
-                    DriverMaker.remove();
-                    SerchText=null;
+
+                    if(!SerchText.isEmpty())
+                    {
+                        TgoogleMap.clear();
+                        BusStopLocation(SerchText);
+                        BusLocation();
+                    }
+                    else
+                    {
+                        SerchText = null;
+                        TgoogleMap.clear();
+
+                    }
+
+                  //  SerchText=null;
                 }
                 fusedLocationProviderClient.removeLocationUpdates( locationCallback);
                 getDeviceLocation();
+
+                CameraPosition colombo = CameraPosition.builder().target(currentLocation).zoom(15).bearing(0).tilt(45).build();
+                TgoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(colombo));
             }
         });
         return TmapView;
@@ -141,6 +169,8 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
         super.onViewCreated(view, savedInstanceState);
 
         getLocationPermission();
+
+
 
         SupportMapFragment fragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         fragment.onCreate(null);
@@ -169,12 +199,11 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
         TgoogleMap = googleMap;
         Log.e("baa","getDeviceLocation");
         getDeviceLocation();
+
+//        Log.e("carent loaction details",currentLocation.latitude+" "+currentLocation.longitude);
+
         TgoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         TgoogleMap.setTrafficEnabled(true);
-
-       // googleMap.addMarker(new MarkerOptions().position(new LatLng(6.894070, 79.902481)).title("Colombo").snippet("go"));
-      //  CameraPosition colombo = CameraPosition.builder().target(new LatLng(6.894070, 79.902481)).zoom(10).bearing(0).tilt(45).build();
-      //  googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(colombo));
 
     }
 
@@ -231,7 +260,6 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
             mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
 
             fusedLocationProviderClient.requestLocationUpdates(mLocationRequest,getlocationcallback(), Looper.myLooper());
-
         }
         catch (SecurityException e)
         {
@@ -248,22 +276,19 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
             public void onLocationResult(LocationResult locationResult) {
                 Log.e("Locatoion on update","getLatitude:"+locationResult.getLastLocation().getLatitude()+" getLongitude:"+locationResult.getLastLocation().getLongitude());
 
-                LatLng latLng = new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
+                currentLocation = new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
 
                 if (marker!=null){
                     Log.e("remove","remove");
                     marker.remove();
                 }
-                MarkerOptions options = new MarkerOptions().position(latLng).title("MY LCATION").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_arrow));
-                marker=TgoogleMap.addMarker(options);
-                CameraPosition colombo = CameraPosition.builder().target(latLng).zoom(15).bearing(0).tilt(45).build();
-                TgoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(colombo));
-
-                if(SerchText != null)
+                else
                 {
-                    Log.e("remove","Bus location");
-                    BusLocation();
+                    CameraPosition colombo = CameraPosition.builder().target(currentLocation).zoom(15).bearing(0).tilt(45).build();
+                    TgoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(colombo));
                 }
+                MarkerOptions options = new MarkerOptions().position(currentLocation).title("MY LCATION").icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_32));
+                marker=TgoogleMap.addMarker(options);
 
             }
         };
@@ -294,7 +319,7 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
                         JSONObject BusStopDetails = jsonArray.getJSONObject(i);
                         LatLng latLng = new LatLng(BusStopDetails.getDouble("Latitude"),BusStopDetails.getDouble("Longitude"));
                         Log.e("Deta BST",BusStopDetails.getString("Name")+" "+BusStopDetails.getDouble("Latitude")+" "+BusStopDetails.getDouble("Longitude"));
-                        MarkerOptions options = new MarkerOptions().position(latLng).title(BusStopDetails.getString("Name")).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus_stop));
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(BusStopDetails.getString("Name")).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bustop_32));
                         locationMaker=TgoogleMap.addMarker(options);
                     }
 
@@ -316,8 +341,9 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
     }
 
 //-=============================================================================================================================
-    private void  BusLocation(){
+    private void BusLocation(){
        LatLng latLng = new LatLng(6.912932,79.972047);
+
         if (DriverMaker!=null){
             Log.e("remove","DriverMaker");
             DriverMaker.remove();
@@ -325,7 +351,7 @@ public class TravelerMapFragment extends Fragment implements OnMapReadyCallback 
 
 
 
-        MarkerOptions options = new MarkerOptions().position(latLng).title("MY LCATION").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus));
+        MarkerOptions options = new MarkerOptions().position(latLng).title("MY LCATION").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus_32));
         DriverMaker=TgoogleMap.addMarker(options);
     }
 
