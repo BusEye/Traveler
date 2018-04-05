@@ -16,17 +16,18 @@
         <Button
             android:id="@+id/scanbtn"
             android:layout_width="241dp"
-            android:layout_height="52dp"
+            android:layout_height="60dp"
             android:layout_above="@+id/textView2"
             android:layout_alignEnd="@+id/acceptbtn"
             android:layout_alignRight="@+id/acceptbtn"
+            android:drawableLeft="@drawable/qr_code"
             android:text="scan"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.128" />
+            app:layout_constraintVertical_bias="0.153" />
 
         <EditText
             android:id="@+id/fromtxt"

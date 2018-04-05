@@ -3,6 +3,9 @@ package com.test.edv.buseyetraveler;
 import android.app.Dialog;
 //import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
@@ -132,14 +135,34 @@ public class UserMenuActivity extends AppCompatActivity
               pyment.replace(R.id.mainLayout,paymentFragment);
               pyment.commit();
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_userprofile) {
+              UserprofileFragment userprofileFragment = new UserprofileFragment();
+              FragmentTransaction userprofile = getSupportFragmentManager().beginTransaction();
+              userprofile.replace(R.id.mainLayout,userprofileFragment);
+              userprofile.commit();
 
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_Logout) {
+            final SharedPreferences UsersharedPreferences = getSharedPreferences(LoginActivity.UserPREFERENCES, Context.MODE_PRIVATE);
+            final SharedPreferences.Editor editor = UsersharedPreferences.edit();
+            editor.clear();
+            editor.apply();
 
+            try{
+                if(UsersharedPreferences.getString("LoginStatus",null).equals("true"))
+                {
+                    Intent intent = new Intent(UserMenuActivity.this,UserMenuActivity.class);
+                    startActivity(intent);
+                }
+            }
+            catch (NullPointerException e)
+            {
+                Intent intent = new Intent(UserMenuActivity.this,LoginActivity.class);
+                startActivity(intent);
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

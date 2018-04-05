@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent" >
 
 
-
- <fragment
+    <fragment
         android:id="@+id/map"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"></fragment>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
 
     <Button
         android:id="@+id/btnliveLocation"
@@ -19,8 +20,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="53dp"
-        android:background="@drawable/ic_gps_fixed_black_36dp"/>
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/ic_gps_fixed_black_36dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -33,7 +34,7 @@
         android:id="@+id/rellayout1">
 
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/txtMapSearch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -41,10 +42,12 @@
             android:layout_toLeftOf="@+id/btnSearch"
             android:layout_toStartOf="@+id/btnSearch"
             android:background="@null"
-            android:hint="Enter City, Location"
+            android:hint="Enter Bus root number"
             android:imeOptions="actionSearch"
             android:textColor="#000"
-            android:textSize="15sp" />
+            android:textSize="15sp">
+            <requestFocus />
+        </AutoCompleteTextView>
 
         <Button
             android:id="@+id/btnSearch"
@@ -54,24 +57,9 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:background="@drawable/ic_search_black_36dp"/>
-<!--
-        android:background="@mipmap/icon_gps"
-android:background="@mipmap/icon_magnifier"
--->
+
 
     </RelativeLayout>
-
-    <!--  <ImageView
-          android:layout_width="40dp"
-          android:layout_height="40dp"
-          android:layout_marginRight="10dp"
-          android:layout_marginLeft="10dp"
-          android:scaleType="centerCrop"
-          android:id="@+id/icon_gps"
-          android:src="@mipmap/icon_gps"
-          android:layout_marginTop="19dp"
-          android:layout_below="@+id/rellayout1"
-          android:layout_alignParentStart="@+id/rellayout1" />-->
 
 
 </RelativeLayout>

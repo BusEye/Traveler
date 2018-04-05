@@ -17,17 +17,22 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity
+            android:name=".WellcomeActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity" />
+        <activity
+            android:name=".RegisterActivity"
+            android:screenOrientation="portrait" />
         <!-- Camara -->
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
@@ -40,8 +45,19 @@
         <activity
             android:name=".UserMenuActivity"
             android:label="@string/title_activity_user_menu"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".CameraActivity"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CameraActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait" />
+
+        <service android:name=".BusLocationService" />
+
+        <activity android:name=".RatingActivity" />
+        <activity android:name=".ConfirmPaymentActivity"></activity>
     </application>
 
 </manifest>

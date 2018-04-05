@@ -61,16 +61,13 @@ public class RegisterActivity extends AppCompatActivity {
                 int Rbtnselectedid = genderradioGroup.getCheckedRadioButtonId();
                 selectedrbtn = (RadioButton) findViewById(Rbtnselectedid);
                 Gender = selectedrbtn.getText().toString();
-            }
-        });
-
-
-        registerbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 sendNetworkRequest();
+
+                Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
+                startActivity(intent);
             }
         });
+
 
 
 
@@ -82,12 +79,11 @@ public class RegisterActivity extends AppCompatActivity {
         try {
             RequestQueue requestqueue = Volley.newRequestQueue(RegisterActivity.this);
 
-            String MoveURL ="https://buseye.000webhostapp.com/Reagister_user.php?Name="+Name+"&Address="+Addres+"&Gender="+Gender+"&NIC="+NIC+"&Email="+Email+"&TP="+TP+"&Username="+Username+"&Password="+Password;
+            String MoveURL ="http://theslbuseye.xyz/Reagister_user.php?Name="+Name+"&Address="+Addres+"&Gender="+Gender+"&NIC="+NIC+"&Email="+Email+"&TP="+TP+"&Username="+Username+"&Password="+Password;
 
             StringRequest stringrequest = new StringRequest(Request.Method.GET, MoveURL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-
 
                     try{ //{"Result":"true","ID":"1","Name":"Esandha"}
 
