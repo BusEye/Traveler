@@ -31,7 +31,7 @@
 
         <EditText
             android:id="@+id/fromtxt"
-            android:layout_width="wrap_content"
+            android:layout_width="239dp"
             android:layout_height="wrap_content"
             android:layout_above="@+id/totxt"
             android:layout_alignLeft="@+id/acceptbtn"
@@ -40,17 +40,19 @@
             android:editable="false"
             android:ems="10"
             android:hint="FROM"
+            android:textColor="@color/Black"
             android:inputType="textPersonName"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.633"
+            app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.407" />
+            app:layout_constraintVertical_bias="0.403" />
 
         <EditText
             android:id="@+id/totxt"
-            android:layout_width="wrap_content"
+            android:layout_width="241dp"
             android:layout_height="wrap_content"
             android:layout_above="@+id/acceptbtn"
             android:layout_alignLeft="@+id/fromtxt"
@@ -60,12 +62,15 @@
             android:ems="10"
             android:hint="To"
             android:inputType="textPersonName"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="20sp"
+            android:textColor="@color/Black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.633"
+            app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.646" />
+            app:layout_constraintVertical_bias="0.636" />
 
         <TextView
             android:id="@+id/textView2"
@@ -75,29 +80,14 @@
             android:layout_alignLeft="@+id/acceptbtn"
             android:layout_alignStart="@+id/acceptbtn"
             android:layout_marginBottom="20dp"
-            android:text="PAYMENT"
+            android:text="AMOUNT"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.766" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/fromtxt"
-            android:layout_alignLeft="@+id/acceptbtn"
-            android:layout_alignStart="@+id/acceptbtn"
-            android:layout_marginBottom="20dp"
-            android:text="FROM"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.124"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.425" />
+            app:layout_constraintVertical_bias="0.691" />
 
         <TextView
             android:id="@+id/textView3"
@@ -107,13 +97,15 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="To"
+            android:text="TO"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.159"
+            app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.575" />
+            app:layout_constraintVertical_bias="0.483" />
 
         <Button
             android:id="@+id/acceptbtn"
@@ -132,7 +124,7 @@
 
         <EditText
             android:id="@+id/paymenttxt"
-            android:layout_width="wrap_content"
+            android:layout_width="239dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
@@ -141,13 +133,34 @@
             android:editable="false"
             android:ems="10"
             android:hint="PAYMENT"
+            android:textColor="@color/Black"
             android:inputType="textPersonName"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.647"
+            app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.759" />
+            app:layout_constraintVertical_bias="0.768" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Rs :"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.077"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.772" />
 
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>

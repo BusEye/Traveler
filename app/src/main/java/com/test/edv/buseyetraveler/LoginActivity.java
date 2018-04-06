@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                                   editor.putString("Gender",jsonObj.getString("Gender"));
                                   editor.putString("NIC",jsonObj.getString("NIC"));
                                   editor.putString("Emails",jsonObj.getString("Emails"));
-                                  editor.putString("TP",jsonObj.getString("Result"));
+                                  editor.putString("TP",jsonObj.getString("TP"));
                                   editor.putString("UserName",jsonObj.getString("UserName"));
                                   editor.commit();
 

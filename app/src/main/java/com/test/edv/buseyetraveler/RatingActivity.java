@@ -40,7 +40,7 @@ public class RatingActivity extends AppCompatActivity {
         myratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                Toast.makeText(RatingActivity.this,"Rating"+rating,Toast.LENGTH_LONG).show();
+                ratingstytes(rating);
             }
         });
 
@@ -50,6 +50,8 @@ public class RatingActivity extends AppCompatActivity {
                 int rate = (int) myratingBar.getRating();
                    saveRating(UID,BID,rate);
                 Toast.makeText(RatingActivity.this,"Thanks for your Rating",Toast.LENGTH_LONG).show();
+                RatingActivity.this.finish();
+
             }
         });
     }
@@ -103,6 +105,30 @@ public class RatingActivity extends AppCompatActivity {
         catch (Exception e)
         {
             Log.e("EX", "Exception: " + e.getMessage());
+        }
+    }
+
+    private void ratingstytes(float rating)
+    {
+        if(rating==1.0)
+        {
+            Toast.makeText(RatingActivity.this,"Very Bad",Toast.LENGTH_SHORT).show();
+        }
+        else if (rating==2.0)
+        {
+            Toast.makeText(RatingActivity.this,"Bad",Toast.LENGTH_SHORT).show();
+        }
+        else if (rating==3.0)
+        {
+            Toast.makeText(RatingActivity.this,"Ok",Toast.LENGTH_SHORT).show();
+        }
+        else if (rating==4.0)
+        {
+            Toast.makeText(RatingActivity.this,"Good",Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(RatingActivity.this,"Very Good",Toast.LENGTH_SHORT).show();
         }
     }
 }

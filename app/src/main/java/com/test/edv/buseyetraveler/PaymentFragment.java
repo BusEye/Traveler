@@ -89,25 +89,31 @@ public class PaymentFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Intent intent1=new Intent(getContext(),ConfirmPaymentActivity.class);
-                startActivity(intent1);
+                Intent intent=new Intent(getContext(),ConfirmPaymentActivity.class);
+
                 final SharedPreferences UsersharedPreferences = getActivity().getSharedPreferences(LoginActivity.UserPREFERENCES, Context.MODE_PRIVATE);
                 UID = UsersharedPreferences.getString("ID",null);
 
                 if(!fromtxt.getText().toString().isEmpty())
                 {
-                    savepayment(UID, BID, fromtxt.getText().toString(), totxt.getText().toString(), Float.parseFloat(paymenttxt.getText().toString()));
+                    intent.putExtra("UID",UID);
+                    intent.putExtra("BID",BID);
+                    intent.putExtra("for",fromtxt.getText().toString());
+                    intent.putExtra("to",totxt.getText().toString());
+                    intent.putExtra("payment",paymenttxt.getText().toString());
+                    startActivity(intent);
+                    //savepayment(UID, BID, fromtxt.getText().toString(), totxt.getText().toString(), Float.parseFloat(paymenttxt.getText().toString()));
                 }
                 else
                 {
                     Toast.makeText(getContext(),"Scane QR cord first",Toast.LENGTH_LONG).show();
                 }
 
-                Intent intent = new Intent(getContext(),RatingActivity.class);
+           /*     Intent intent = new Intent(getContext(),RatingActivity.class);
                 //=>BID,UID
                 intent.putExtra("BID",BID);
                 intent.putExtra("UID",UID);
-                startActivity(intent);
+                startActivity(intent);*/
             }
         });
 
@@ -142,56 +148,4 @@ public class PaymentFragment extends Fragment {
             }
         }
     }
-
-    private void savepayment(String UID,String BID,String From,String To,float amount)
-    {
-        try {
-            RequestQueue requestqueue = Volley.newRequestQueue(getContext());
-
-            String MoveURL ="http://theslbuseye.xyz/Savepyments.php?UID="+UID+"&BID="+BID+"&From="+From+"&To="+To+"&Amount="+amount;
-
-            StringRequest stringrequest = new StringRequest(Request.Method.GET, MoveURL, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-
-
-                    try{
-
-                        JSONObject jsonObj = new JSONObject(response);
-                        Log.i("Full value",response);
-
-                        String Result = jsonObj.getString("Result")+" "+jsonObj.getString("ID")+" "+jsonObj.getString("Name");
-                        Log.e("resalt",Result);
-
-                        if (jsonObj.getString("Massage").equals("Pass"))
-                        {
-                            Toast.makeText(getContext(),"Payment save sucsses",Toast.LENGTH_LONG).show();
-                        }
-                        else
-                        {
-                            Toast.makeText(getContext(),"Sumthing Wrong plese try again",Toast.LENGTH_LONG).show();
-                        }
-
-
-                    }
-                    catch (JSONException e)
-                    {
-                        Log.e("ls", "Json parsing error: " + e);
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error)
-                {
-                    Log.e("Error", error.toString());
-                }
-            });
-            requestqueue.add(stringrequest);
-        }
-        catch (Exception e)
-        {
-            Log.e("EX", "Exception: " + e.getMessage());
-        }
-    }
-
 }
